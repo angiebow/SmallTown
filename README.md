@@ -42,3 +42,10 @@
 
 #### 6. **Testing dan Optimasi**
    - **Uji Performa**: Menguji aplikasi di berbagai perangkat untuk memastikan aplikasi berjalan
+
+<br>
+
+•⁠  ⁠pohon tumbuh (pake slider)
+•⁠  ⁠⁠matahari (efek cahaya dari movement nya)
+•⁠  ⁠⁠move player (belum tau sih, gimana klo auto jalan terus cuma kita bisa drag n drop gitu)
+•⁠  ⁠⁠siram pohon (bisa tumbuh)
