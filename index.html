@@ -1,17 +1,50 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Town</title>
-    <style>
-        body { margin: 0; }
-        canvas { display: block; }
-    </style>
-</head>
-<body>
-    <script src="main.js"></script>
-    <input type="range" id="growthSlider" min="1" max="3" step="0.1" value="1" style="position: absolute; top: 10px; left: 10px;">
-</body>
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>SMALLTOWN</title>
+        <link href="https://fonts.googleapis.com/css2?family=Dosis:wght@500&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="main.css">
+    </head>
+
+    <body>
+        <button id='about-button'></button>
+        <div id="about" class="">
+            <div class="popup">
+                <div class="inner">
+                    <h1>Infinitown</h1>
+                    <div class="description">
+
+                        <p>Smalltown</p>
+
+                        <p>Made with: Three.js <br>Models by SketchFeb</p>
+
+                    </div>
+                    <div class="footer">
+                        <p class="small">
+                            Made by FPS team, for a Computer Graphics homework.
+                        </p>
+                    </div>
+                    <div class="close" id="about-close"></div>
+                </div>
+            </div>
+        </div>
+
+        <canvas style="width: 100vw; height: 100vh" id="c"></canvas>
+        <script type="text/javascript" src="js/three.js"></script>
+        <!-- <script type="text/javascript" src="js/MapControls.js"></script> -->
+        <!-- <script type="text/javascript" src="js/inflate.min.js"></script> -->
+        <script type="text/javascript" src="js/stats.min.js"></script>
+        <script type="text/javascript" src="js/GLTFLoader.js"></script>
+        <script type="text/javascript" src="js/OrbitControls.js"></script>
+        <script type="text/javascript" src="js/RGBELoader.js"></script>
+        <script type="text/javascript" src="js/main.js"></script>
+        <script>
+
+        </script>
+    </body>
+
 </html>
