@@ -219,7 +219,8 @@ function main() {
   }
 
   function loadClusters({ x, z, cluster, direction }) {
-    gltfLoader.load(`/infinitown/gltf/${cluster}.gltf`, (gltf) => {
+    gltfLoader.load(`/smalltown
+/gltf/${cluster}.gltf`, (gltf) => {
       // compute the box that contains all the stuff
       // from root and below
       const box = new THREE.Box3().setFromObject(gltf.scene);
@@ -307,7 +308,7 @@ function addLights() {
 }
 
 function loadCars({ x, z, cluster, direction }) {
-  loader.load(`/infinitown/gltf/${cluster}.gltf`, (gltf) => {
+  loader.load(`/gltf/${cluster}.gltf`, (gltf) => {
     controls.update();
 
     gltf.scene.traverse(function (child) {
