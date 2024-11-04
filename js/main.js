@@ -129,7 +129,7 @@ function main() {
   controls.screenSpacePanning = true;
 
   scene = new THREE.Scene();
-  scene.background = new THREE.Color('#9FE3FA');
+  scene.background = new THREE.Color('#FFDAB9');
 
   renderer.shadowMap.enabled = true;
   renderer.gammaInput = renderer.gammaOutput = true;
