@@ -219,8 +219,7 @@ function main() {
   }
 
   function loadClusters({ x, z, cluster, direction }) {
-    gltfLoader.load(`/smalltown
-/gltf/${cluster}.gltf`, (gltf) => {
+    gltfLoader.load(`/gltf/${cluster}.gltf`, (gltf) => {
       // compute the box that contains all the stuff
       // from root and below
       const box = new THREE.Box3().setFromObject(gltf.scene);
