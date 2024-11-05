@@ -1,5 +1,11 @@
 const SOUTH = 2;
 const LEAP = 240;
+
+let isPlanting = false;
+let treeStages = [];
+let growthSpeed = 1; 
+let growthStage = 0; 
+
 var camera,
   scene,
   controls,
@@ -109,6 +115,19 @@ const cluster = [
   { x: -5, z: -5, cluster: clusterNames[8], direction: SOUTH },
 ];
 
+const loadTreeStages = () => {
+  const loader = new THREE.GLTFLoader();
+  const treeStageFiles = ['tree_stage1.gltf', 'tree_stage2.gltf', 'tree_stage3.gltf']; 
+
+  treeStageFiles.forEach((file, index) => {
+    loader.load(`/gltf/${file}`, (gltf) => {
+      treeStages[index] = gltf.scene;
+    });
+  });
+};
+
+loadTreeStages();
+
 function main() {
   const canvas = document.querySelector('#c');
   renderer = new THREE.WebGLRenderer({ canvas });
@@ -130,6 +149,53 @@ function main() {
 
   scene = new THREE.Scene();
   scene.background = new THREE.Color('#FFDAB9');
+
+document.getElementById('seed-button').addEventListener('click', () => {
+  isPlanting = true;
+  alert("Click on the ground to plant your tree!");
+});
+
+document.getElementById('growth-slider').addEventListener('input', (event) => {
+  growthSpeed = parseInt(event.target.value);
+});
+
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+
+function onDocumentMouseDown(event) {
+  if (!isPlanting || treeStages.length === 0) return;
+
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+  raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObjects(scene.children, true);
+
+  if (intersects.length > 0) {
+    const intersect = intersects[0];
+    growthStage = 0; 
+    let currentTree = treeStages[growthStage].clone(); 
+
+    currentTree.position.copy(intersect.point);
+    scene.add(currentTree);
+    isPlanting = false; 
+
+    let growthInterval = setInterval(() => {
+      scene.remove(currentTree);
+      growthStage++;
+
+      if (growthStage < treeStages.length) {
+        currentTree = treeStages[growthStage].clone();
+        currentTree.position.copy(intersect.point); 
+        scene.add(currentTree);
+      } else {
+        clearInterval(growthInterval); 
+      }
+    }, 1000 / growthSpeed);
+  }
+}
+
+document.addEventListener('mousedown', onDocumentMouseDown, false);
 
   renderer.shadowMap.enabled = true;
   renderer.gammaInput = renderer.gammaOutput = true;
@@ -220,17 +286,11 @@ function main() {
 
   function loadClusters({ x, z, cluster, direction }) {
     gltfLoader.load(`/gltf/${cluster}.gltf`, (gltf) => {
-      // compute the box that contains all the stuff
-      // from root and below
       const box = new THREE.Box3().setFromObject(gltf.scene);
 
       const boxSize = box.getSize(new THREE.Vector3()).length();
       const boxCenter = box.getCenter(new THREE.Vector3());
 
-      // set the camera to frame the box
-      // frameArea(boxSize * 0.5, boxSize, boxCenter, camera);
-
-      // update the Trackball controls to handle the new size
       controls.maxDistance = boxSize * 5;
       camera.position.copy(boxCenter);
       camera.position.x += boxSize / 8.0;

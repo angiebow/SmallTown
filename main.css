@@ -92,11 +92,11 @@ canvas {
 
 #seed-button {
   position: absolute;
-  top: 4em; 
+  top: 5em;
   right: 2.75em;
   height: 2.875em;
   width: 2.875em;
-  background: url('./assets/tree.png') no-repeat;
+  background: url('./assets/tree.png') no-repeat; 
   background-size: 100%;
   cursor: pointer;
   z-index: 2;
