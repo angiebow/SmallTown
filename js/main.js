@@ -117,12 +117,11 @@ const cluster = [
 
 const loadTreeStages = () => {
   const loader = new THREE.GLTFLoader();
-  const treeStageFiles = ['tree_stage1.gltf', 'tree_stage2.gltf', 'tree_stage3.gltf']; 
+  const treeStageFiles = ['tree1.glb'];
 
-  treeStageFiles.forEach((file, index) => {
-    loader.load(`/gltf/${file}`, (gltf) => {
-      treeStages[index] = gltf.scene;
-    });
+  loader.load(`/gltf/${treeStageFiles[0]}`, (gltf) => {
+    treeStages[0] = gltf.scene;
+    console.log("Full-grown tree loaded:", gltf.scene); // Log the loaded model
   });
 };
 
@@ -171,27 +170,17 @@ function onDocumentMouseDown(event) {
   raycaster.setFromCamera(mouse, camera);
   const intersects = raycaster.intersectObjects(scene.children, true);
 
+  console.log("Intersections:", intersects); // Log intersections
+
   if (intersects.length > 0) {
     const intersect = intersects[0];
-    growthStage = 0; 
-    let currentTree = treeStages[growthStage].clone(); 
-
-    currentTree.position.copy(intersect.point);
-    scene.add(currentTree);
-    isPlanting = false; 
-
-    let growthInterval = setInterval(() => {
-      scene.remove(currentTree);
-      growthStage++;
-
-      if (growthStage < treeStages.length) {
-        currentTree = treeStages[growthStage].clone();
-        currentTree.position.copy(intersect.point); 
-        scene.add(currentTree);
-      } else {
-        clearInterval(growthInterval); 
-      }
-    }, 1000 / growthSpeed);
+    const fullGrownTree = treeStages[0].clone();
+    fullGrownTree.position.copy(intersect.point);
+    scene.add(fullGrownTree);
+    isPlanting = false;
+    console.log("Tree added at:", intersect.point); // Log tree placement
+  } else {
+    console.log("No intersections detected"); // Log if no intersections found
   }
 }
 
