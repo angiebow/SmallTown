@@ -104,3 +104,18 @@ canvas {
   outline: none;
   background-color: transparent; 
 }
+
+#day-night-toggle {
+  position: absolute;
+  top: 10em; 
+  right: 2.75em;
+  height: 3.3em;
+  width: 3.3em;
+  background: url('./assets/night.png') no-repeat; 
+  background-size: 100%;
+  cursor: pointer;
+  z-index: 2;
+  border: none;
+  outline: none;
+  background-color: transparent; 
+}

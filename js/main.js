@@ -20,6 +20,9 @@ var camera,
   loader = new THREE.GLTFLoader(manager),
   isPlaying = true;
 
+var directionalLight, hemisphereLight; 
+let isDay = true;
+
 var clusterNames = [
   'factory',
   'house2',
@@ -147,49 +150,48 @@ function main() {
   controls.screenSpacePanning = true;
 
   scene = new THREE.Scene();
-  scene.background = new THREE.Color('#FFDAB9');
+  scene.background = new THREE.Color('#FFDAB9'); // Warna PeachPuff
 
-document.getElementById('seed-button').addEventListener('click', () => {
-  isPlanting = true;
-  alert("Click on the ground to plant your tree!");
-});
+  document.getElementById('seed-button').addEventListener('click', () => {
+    isPlanting = true;
+    alert("Click on the ground to plant your tree!");
+  });
 
-document.getElementById('growth-slider').addEventListener('input', (event) => {
-  growthSpeed = parseInt(event.target.value);
-});
+  document.getElementById('growth-slider').addEventListener('input', (event) => {
+    growthSpeed = parseInt(event.target.value);
+  });
 
-const raycaster = new THREE.Raycaster();
-const mouse = new THREE.Vector2();
+  const raycaster = new THREE.Raycaster();
+  const mouse = new THREE.Vector2();
 
-function onDocumentMouseDown(event) {
-  if (!isPlanting || treeStages.length === 0) return;
+  function onDocumentMouseDown(event) {
+    if (!isPlanting || treeStages.length === 0) return;
 
-  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-  raycaster.setFromCamera(mouse, camera);
-  const intersects = raycaster.intersectObjects(scene.children, true);
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObjects(scene.children, true);
 
-  console.log("Intersections:", intersects); // Log intersections
+    console.log("Intersections:", intersects); // Log intersections
 
-  if (intersects.length > 0) {
-    const intersect = intersects[0];
-    const fullGrownTree = treeStages[0].clone();
-    fullGrownTree.position.copy(intersect.point);
-    scene.add(fullGrownTree);
-    isPlanting = false;
-    console.log("Tree added at:", intersect.point); // Log tree placement
-  } else {
-    console.log("No intersections detected"); // Log if no intersections found
+    if (intersects.length > 0) {
+      const intersect = intersects[0];
+      const fullGrownTree = treeStages[0].clone();
+      fullGrownTree.position.copy(intersect.point);
+      scene.add(fullGrownTree);
+      isPlanting = false;
+      console.log("Tree added at:", intersect.point); // Log tree placement
+    } else {
+      console.log("No intersections detected"); // Log if no intersections found
+    }
   }
-}
 
-document.addEventListener('mousedown', onDocumentMouseDown, false);
+  document.addEventListener('mousedown', onDocumentMouseDown, false);
 
   renderer.shadowMap.enabled = true;
   renderer.gammaInput = renderer.gammaOutput = true;
   renderer.gammaFactor = 2.0;
-  // renderer.physicallyCorrectLights = true;
   renderer.outputEncoding = THREE.sRGBEncoding;
   renderer.setClearColor(0xcccccc);
   renderer.setPixelRatio(window.devicePixelRatio);
@@ -198,19 +200,20 @@ document.addEventListener('mousedown', onDocumentMouseDown, false);
   {
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-    const light = new THREE.DirectionalLight(16774618, 1.5);
-    light.position.set(-300, 750, -300);
-    light.castShadow = true;
-    light.shadow.mapSize.width = light.shadow.mapSize.height = 4096;
-    light.shadow.camera.near = 1;
-    light.shadow.camera.far = 1000;
-    light.shadow.camera.left = light.shadow.camera.bottom = -200;
-    light.shadow.camera.right = light.shadow.camera.top = 200;
-    light.shadow.mapSize.width = 2048;
-    light.shadow.mapSize.height = 2048;
-    scene.add(light);
-    scene.add(light.target);
-    scene.add(new THREE.HemisphereLight(0xefefef, 0xffffff, 1));
+    // Inisialisasi pencahayaan
+    directionalLight = new THREE.DirectionalLight(0xfffacd, 1.5); // Warna LemonChiffon
+    directionalLight.position.set(-300, 750, -300);
+    directionalLight.castShadow = true;
+    directionalLight.shadow.mapSize.width = directionalLight.shadow.mapSize.height = 4096;
+    directionalLight.shadow.camera.near = 1;
+    directionalLight.shadow.camera.far = 1000;
+    directionalLight.shadow.camera.left = directionalLight.shadow.camera.bottom = -200;
+    directionalLight.shadow.camera.right = directionalLight.shadow.camera.top = 200;
+    scene.add(directionalLight);
+    scene.add(directionalLight.target);
+
+    hemisphereLight = new THREE.HemisphereLight(0xefefef, 0xffffff, 1);
+    scene.add(hemisphereLight);
   }
 
   const gltfLoader = new THREE.GLTFLoader();
@@ -306,7 +309,6 @@ document.addEventListener('mousedown', onDocumentMouseDown, false);
       if (direction) gltf.scene.rotation.y = Math.PI * direction;
 
       scene.add(gltf.scene);
-      // addLights();
     });
   }
   requestAnimationFrame(render);
@@ -326,7 +328,11 @@ document.addEventListener('mousedown', onDocumentMouseDown, false);
 }
 
 main();
-//Events
+
+// event listener untuk tombol toggle siang/malam
+document.getElementById('day-night-toggle').addEventListener('click', switchDayNight);
+
+// Events
 window.addEventListener('resize', onResize, false);
 window.addEventListener('mousemove', onMouseMove, false);
 
@@ -342,18 +348,34 @@ function onMouseMove(event) {
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 }
 
-function addLights() {
-  const light1 = new THREE.AmbientLight(0xffffff, 2);
-  light1.name = 'ambient_light';
-  camera.add(light1);
+function switchDayNight() {
+  isDay = !isDay;
 
-  const light2 = new DirectionalLight(0xffffff, 4);
-  light2.position.set(0.5, 0, 0.866); // ~60º
-  light2.name = 'main_light';
-  camera.add(light2);
+  if (isDay) {
+    // Mode Siang
+    scene.background = new THREE.Color('#FFDAB9'); // Warna PeachPuff
+    directionalLight.intensity = 1.5;
+    hemisphereLight.intensity = 1;
+    directionalLight.color.set(0xfffacd); // Warna LemonChiffon
+    hemisphereLight.color.set(0xefefef);
+    hemisphereLight.groundColor.set(0xffffff);
 
-  renderer.toneMappingExposure = 1;
+    // Ubah ikon tombol menjadi 'night' karena mode saat ini adalah siang
+    document.getElementById('day-night-toggle').style.backgroundImage = "url('./assets/night.png')";
+  } else {
+    // Mode Malam
+    scene.background = new THREE.Color('#000033'); // Warna Biru Tua
+    directionalLight.intensity = 0.2; // Intensitas lebih rendah
+    hemisphereLight.intensity = 0.3; // Intensitas lebih rendah
+    directionalLight.color.set(0x666699); // Warna lebih redup
+    hemisphereLight.color.set(0x333366);
+    hemisphereLight.groundColor.set(0x000000);
+
+    // Ubah ikon tombol menjadi 'day' karena mode saat ini adalah malam
+    document.getElementById('day-night-toggle').style.backgroundImage = "url('./assets/day.png')";
+  }
 }
+
 
 function loadCars({ x, z, cluster, direction }) {
   loader.load(`/gltf/${cluster}.gltf`, (gltf) => {
