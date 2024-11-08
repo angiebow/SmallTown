@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Tree Project</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="Tree.js"></script>
+    <script src="TreeGeometry.js"></script>
+    <script src="TreeHelper.js"></script>
+</head>
+<body>
+    <script>
+        // Set up the scene, camera, and renderer
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 10;
+
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Create the tree using Tree.js and TreeGeometry.js
+        const tree = new THREE.Tree({
+            generations: 5,     // Increase for more branches
+            length: 5.0,        // Adjust for longer main branches
+            uvLength: 16.0,
+            radius: 0.3,        // Thicker trunk
+            radiusSegments: 12, // Smoother trunk surface
+            heightSegments: 12  // More segments per branch
+        });
+
+        const geometry = THREE.TreeGeometry.build(tree);
+        const material = new THREE.MeshPhongMaterial({ color: 0x228b22 });
+        const mesh = new THREE.Mesh(geometry, material);
+
+        const spotLight = new THREE.SpotLight(0xffffff);
+        spotLight.position.set(15, 40, 35);
+        spotLight.castShadow = true;
+        scene.add(spotLight);
+
+        const light = new THREE.DirectionalLight(0xffffff, 1);
+        light.position.set(5, 10, 7.5);
+        scene.add(light);
+
+        const groundGeometry = new THREE.PlaneGeometry(100, 100);
+        const groundMaterial = new THREE.MeshPhongMaterial({ color: 0x8B4513 });
+        const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+        ground.rotation.x = -Math.PI / 2;
+        ground.position.y = -2;
+        scene.add(ground);
+
+        scene.add(mesh);
+
+        // Add light to make the tree visible with Phong material
+        const ambientLight = new THREE.AmbientLight(0x404040);
+        const pointLight = new THREE.PointLight(0xffffff);
+        pointLight.position.set(10, 10, 10);
+        scene.add(ambientLight);
+        scene.add(pointLight);
+
+        // Render loop
+        function animate() {
+            requestAnimationFrame(animate);
+            mesh.rotation.y += 0.01; // Existing rotation
+            mesh.position.x += Math.sin(Date.now() * 0.001) * 0.001; // Small sway effect
+            renderer.render(scene, camera);
+            renderer.setClearColor(0x87CEEB); // Light blue for a sky effect
+        }
+        animate();
+    </script>
+</body>
+</html>
