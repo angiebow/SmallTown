@@ -1,57 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
 
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>SMALLTOWN</title>
-        <link href="https://fonts.googleapis.com/css2?family=Dosis:wght@500&display=swap" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="main.css">
-    </head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMALLTOWN</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dosis:wght@500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="main.css">
+</head>
 
-    <body>
-        <button id='about-button'></button>
-        <button id="seed-button">Tree</button>
-        <button id="day-night-toggle"></button>
-        <input type="range" id="growth-slider" min="1" max="5" value="1" style="position: absolute; top: 8em; right: 2.75em; z-index: 2;" />
-        <div id="about" class="">
-            <div class="popup">
-                <div class="inner">
-                    <h1>Smalltown</h1>
-                    <div class="description">
+<body>
+    <button id="about-button"></button>
+    <button id="seed-button">Tree</button>
+    <button id="day-night-toggle"></button>
+    <input type="range" id="growth-slider" min="1" max="5" value="1" style="position: absolute; top: 8em; right: 2.75em; z-index: 2;" />
 
-                        <p>Smalltown</p>
-
-                        <p>Made with: Three.js <br>Models by SketchFeb</p>
-
-                    </div>
-                    <div class="footer">
-                        <p class="small">
-                            Made by FPS team, for a Computer Graphics homework.
-
+    <div id="about" class="">
+        <div class="popup">
+            <div class="inner">
+                <h1>Smalltown</h1>
+                <div class="description">
+                    <p>Smalltown</p>
+                    <p>Made with: Three.js <br>Models by SketchFab</p>
+                </div>
+                <div class="footer">
+                    <p class="small">
+                        Made by FPS team, for a Computer Graphics homework.
+                        <ul>
                             <li>5025221051: Pelangi Masita Wati</li>
                             <li>5025221302: Muhammad Fahmi Syahputra</li>
                             <li>5025221256: Aryasatya Wiryawan</li>
-                        </p>
-                    </div>
-                    <div class="close" id="about-close"></div>
+                        </ul>
+                    </p>
                 </div>
+                <div class="close" id="about-close">Close</div>
             </div>
         </div>
+    </div>
 
-        <canvas style="width: 100vw; height: 100vh" id="c"></canvas>
-        <script type="text/javascript" src="js/three.js"></script>
-        <!-- <script type="text/javascript" src="js/MapControls.js"></script> -->
-        <!-- <script type="text/javascript" src="js/inflate.min.js"></script> -->
-        <script type="text/javascript" src="js/stats.min.js"></script>
-        <script type="text/javascript" src="js/GLTFLoader.js"></script>
-        <script type="text/javascript" src="js/OrbitControls.js"></script>
-        <script type="text/javascript" src="js/RGBELoader.js"></script>
-        <script type="text/javascript" src="js/main.js"></script>
-        <script>
+    <canvas id="c" style="width: 100vw; height: 100vh; display: block;"></canvas>
 
-        </script>
-    </body>
+    <script src="js/three.js"></script>
+    <script src="js/GLTFLoader.js"></script>
+    <script src="js/OrbitControls.js"></script>
+    <script src="js/main.js"></script> 
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="Tree.js"></script>
+    <script src="TreeGeometry.js"></script>
+    <script src="TreeHelper.js"></script>
+
+    <script>
+        document.getElementById('seed-button').addEventListener('click', function() {
+            window.location.href = 'http://127.0.0.1:5500/tree/index.html';
+        });
+    </script>
+</body>
 
 </html>

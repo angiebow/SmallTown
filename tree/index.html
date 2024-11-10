@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Custom Tree Project</title>
+    <title>Interactive Tree Growth</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="Tree.js"></script>
     <script src="TreeGeometry.js"></script>
@@ -11,61 +11,93 @@
 </head>
 <body>
     <script>
-        // Set up the scene, camera, and renderer
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.z = 10;
+        camera.position.set(0, 10, 20);
+        camera.lookAt(0, 0, 0);
 
         const renderer = new THREE.WebGLRenderer();
         renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setClearColor(0x87CEEB);
         document.body.appendChild(renderer.domElement);
 
-        // Create the tree using Tree.js and TreeGeometry.js
-        const tree = new THREE.Tree({
-            generations: 5,     // Increase for more branches
-            length: 5.0,        // Adjust for longer main branches
-            uvLength: 16.0,
-            radius: 0.3,        // Thicker trunk
-            radiusSegments: 12, // Smoother trunk surface
-            heightSegments: 12  // More segments per branch
-        });
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
 
-        const geometry = THREE.TreeGeometry.build(tree);
-        const material = new THREE.MeshPhongMaterial({ color: 0x228b22 });
-        const mesh = new THREE.Mesh(geometry, material);
-
-        const spotLight = new THREE.SpotLight(0xffffff);
-        spotLight.position.set(15, 40, 35);
-        spotLight.castShadow = true;
-        scene.add(spotLight);
-
-        const light = new THREE.DirectionalLight(0xffffff, 1);
-        light.position.set(5, 10, 7.5);
-        scene.add(light);
-
+        // Ground plane
         const groundGeometry = new THREE.PlaneGeometry(100, 100);
-        const groundMaterial = new THREE.MeshPhongMaterial({ color: 0x8B4513 });
+        const groundMaterial = new THREE.MeshPhongMaterial({ color: 0xFFA500 });
         const ground = new THREE.Mesh(groundGeometry, groundMaterial);
         ground.rotation.x = -Math.PI / 2;
         ground.position.y = -2;
+        ground.name = "ground"; // Tag the ground for raycasting
         scene.add(ground);
 
-        scene.add(mesh);
-
-        // Add light to make the tree visible with Phong material
         const ambientLight = new THREE.AmbientLight(0x404040);
         const pointLight = new THREE.PointLight(0xffffff);
         pointLight.position.set(10, 10, 10);
         scene.add(ambientLight);
         scene.add(pointLight);
 
-        // Render loop
+        // Create a function to add a tree with a growth animation at a specified position
+        function addTree(position) {
+            const tree = new THREE.Tree({
+                generations: 4,      // Define number of branch generations
+                length: 5.0,         // Length of main trunk
+                uvLength: 16.0,
+                radius: 0.2,
+                radiusSegments: 8,
+                heightSegments: 8
+            });
+
+            const geometry = THREE.TreeGeometry.build(tree);
+            const material = new THREE.MeshPhongMaterial({ color: 0x228b22 });
+            const treeMesh = new THREE.Mesh(geometry, material);
+            treeMesh.position.copy(position);
+
+            // Set initial scale to 0 (invisible)
+            treeMesh.scale.set(0, 0, 0);
+            scene.add(treeMesh);
+
+            // Animate scale to grow the tree over time
+            const growthDuration = 3000; // 3 seconds
+            const startTime = Date.now();
+
+            function grow() {
+                const elapsed = Date.now() - startTime;
+                const progress = Math.min(elapsed / growthDuration, 1); // Clamp to [0, 1]
+                treeMesh.scale.set(progress, progress, progress); // Grow uniformly
+
+                if (progress < 1) {
+                    requestAnimationFrame(grow); // Continue animation until fully grown
+                }
+            }
+
+            grow(); // Start growth animation
+        }
+
+        // Mouse click event to grow tree at click position on ground
+        function onMouseClick(event) {
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(scene.children);
+
+            intersects.forEach(intersect => {
+                if (intersect.object.name === "ground") {
+                    const position = intersect.point;
+                    addTree(position); // Add tree at clicked position with growth animation
+                }
+            });
+        }
+
+        // Listen for clicks on the window
+        window.addEventListener('click', onMouseClick, false);
+
         function animate() {
             requestAnimationFrame(animate);
-            mesh.rotation.y += 0.01; // Existing rotation
-            mesh.position.x += Math.sin(Date.now() * 0.001) * 0.001; // Small sway effect
             renderer.render(scene, camera);
-            renderer.setClearColor(0x87CEEB); // Light blue for a sky effect
         }
         animate();
     </script>
