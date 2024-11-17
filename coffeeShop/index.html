@@ -1,23 +1,82 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Hackbright Coffee Shop</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smalltown Coffee Shop</title>
 
-    <link rel="stylesheet"
-          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
-    <link rel="stylesheet"
-          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+
+    <!-- Custom Styles -->
     <link href="static/coffee.css" rel="stylesheet">
-    <link href="http://fonts.googleapis.com/css?family=Raleway" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f3efea;
+            color: #4a403a;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            text-align: center;
+            padding-top: 50px;
+        }
+        .starter-template h1 {
+            font-size: 3em;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #6f4e37;
+        }
+        .starter-template h3 {
+            font-size: 1.5em;
+            font-weight: 400;
+            margin-top: 10px;
+        }
+        img {
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            transition: transform 0.3s ease-in-out;
+        }
+        img:hover {
+            transform: scale(1.05);
+        }
+        .table {
+            margin-top: 30px;
+        }
+        .table td {
+            font-size: 1.2em;
+            padding: 10px;
+            vertical-align: middle;
+        }
+        .btn {
+            background-color: #6f4e37;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+        .btn:hover {
+            background-color: #4a2f22;
+        }
+        h4 {
+            font-size: 1.5em;
+            font-weight: 600;
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
 <div class="container">
     <div class="starter-template">
-        <h1>Coffee Shop</h1>
-        <br>
-
-        <img id="coffee-image" src="LOLWUT" alt="make this image work with js" height="300" width="200">
-
+        <h1>Smalltown Coffee Shop</h1>
+        <p>Enjoy the aroma of freshly brewed coffee!</p>
+        <img id="coffee-image" src="static/coffee_beans.jpg" alt="Coffee Beans" height="300" width="200">
         <h3 id="message">Click The Image To Order Coffee</h3>
 
         <table class="table">
@@ -39,46 +98,37 @@
             </tr>
         </table>
 
-        <h4>Total: <span id="revenue"><!-- Revenue Message will show up here --></span></h4>
+        <h4>Total: <span id="revenue">$0.00</span></h4>
     </div>
 </div>
 
 <script>
-
-    // Set these variables to their DOM elements
-
-    var myImage = document.getElementById("coffee-image"); 
-
-    // var oldSrc = myImage.getAttribute("src");
-
+    // Replace coffee image
+    var myImage = document.getElementById("coffee-image");
     myImage.setAttribute("src", "static/coffee_beans.jpg");
 
-    var myRevenueMessage = document.getElementById("revenue");
-
-    // Change coffee beans image upon clicking it
-
-    var makeCoffee = function (evt) {
-        setTimeout(myImage.setAttribute("src", "static/coffee_machine.jpg"), 500);
-         };
-
-    myImage.setAttribute("src", "static/coffee_beans.jpg"); 
-    // };)   
-
-    //     
-
-    myImage.addEventListener('click', makeCoffee);
-
-    // use this JavaScript object in further study step
+    var revenue = 0;
+    var revenueDisplay = document.getElementById("revenue");
 
     var prices = {
-        "brew": 2.05,
         "espresso": 3.25,
         "latte": 4.15,
         "hot chocolate": 2.50
     };
 
+    var updateRevenue = (price) => {
+        revenue += price;
+        revenueDisplay.textContent = `$${revenue.toFixed(2)}`;
+    };
 
+    document.getElementById("espresso").addEventListener("click", () => updateRevenue(prices.espresso));
+    document.getElementById("latte").addEventListener("click", () => updateRevenue(prices.latte));
+    document.getElementById("hot-chocolate").addEventListener("click", () => updateRevenue(prices["hot chocolate"]));
+
+    myImage.addEventListener("click", () => {
+        myImage.setAttribute("src", "static/coffee_machine.jpg");
+        setTimeout(() => myImage.setAttribute("src", "static/coffee_beans.jpg"), 1000);
+    });
 </script>
-
 </body>
 </html>
