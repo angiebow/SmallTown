@@ -1,28 +1,11 @@
-
-//////////////////////////////////////////
-///////////     BUS DERBY      ///////////
-//////////////////////////////////////////
-
-
-
-/////---Sources---/////
-
 Physijs.scripts.worker = "/js/physijs_worker.js";
 Physijs.scripts.ammo = "/js/ammo.js";
-
-
-
-/////---Settings---/////
 
 var bwf = 3.5;  //bus wheel friction 
 var bwr = 0;  //bus wheel restitution
 var pf = 4.2;  //platform friction
 var pr = 0;  //platform restitution
 var backgroundColor = 0xCDD3D6;
-
-
-
-/////---Initiation---/////
  
 var scene, environment, camera;
 var busArray = [];
@@ -31,33 +14,22 @@ var Player2 = { name: "bertha", score: 0 };
 var roundActive = false;
 var loadingAnimation = document.getElementById("loading_animation_page");  // "visibility:hidden" in css
 
-///Renderer
 var renderer = new THREE.WebGLRenderer( { antialias: true } );
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 
-
-
-/////---Objects---/////
-
-
-///--Environment---///
 function Environment() {
   
-  ///physi.js scene
   scene = new Physijs.Scene();
   scene.setGravity(new THREE.Vector3(0, -50, 0));
 
-  ///background
   renderer.setClearColor (backgroundColor, 1);
 
-  ///camera
   camera = new THREE.PerspectiveCamera(35, window.innerWidth/window.innerHeight, 1, 10000 );
   camera.position.set( 0, 300, 600 );
   camera.zoom = 3;
   scene.add( camera );
 
-  ///lighting & shadows
   var lightA1 = new THREE.AmbientLight(0xFFFFFF, 0.85);
   scene.add(lightA1);
   var lightD1 = new THREE.DirectionalLight( 0xFFFFFF, 0.3 );
@@ -74,14 +46,12 @@ function Environment() {
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-  ///fog
   scene.fog = new THREE.Fog( 
     backgroundColor, 
     camera.position.z + 5, 
     camera.position.z + 200 
   );
 
-  ///platform
   var platform;
   var platformDiameter = 170;
   var platformRadiusTop = platformDiameter * 0.5;  
@@ -96,7 +66,6 @@ function Environment() {
     platformSegments 
   );
   
-  //physi.js platform (invisible; provides structure) (separating three.js & physi.js improves peformance)
   var physiPlatformMaterial = Physijs.createMaterial(
     new THREE.MeshLambertMaterial(), pf, pr  
   );
@@ -106,7 +75,6 @@ function Environment() {
   physiPlatform.visible = false;
   scene.add( physiPlatform );
 
-  //three.js platform (visible; provides image) (separating three.js & physi.js improves peformance)
   var platformMaterialsArray = [];
   var platformMaterialColor = new THREE.MeshLambertMaterial( { color: 0x606060 } );
   platformMaterialsArray.push( platformMaterialColor );  //(materialindex = 0)
@@ -114,10 +82,8 @@ function Environment() {
   var platformTextureLoader = new THREE.TextureLoader();
   ptr = 4.5;  //platform texture repeat
   platformTextureLoader.load(platformImage, function (texture) {
-    //shrinks & repeats the image for the designate number of times
     texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
     texture.repeat.set( ptr, ptr );
-    //sets textue
     var platformMaterialImage = new THREE.MeshLambertMaterial( { map: texture } );
     platformMaterialsArray.push( platformMaterialImage );  //(materials index = 1)
   });
@@ -140,15 +106,12 @@ function Environment() {
 
 }
 
-
-///---Buses---///
 function Bus(platformSide) {  //platformSide should be "platformLeft" or "platformRight"
   
   var bus = this;
   bus.platformSide = platformSide;
   bus.score = 0;
 
-  ///frame
   var bfp = ( bus.platformSide == "platformLeft" ? { x:-40, y:3, z:0 } : { x:40, y:3, z:0 } );  //bus frame position
   var busFrameGeometry = new THREE.BoxGeometry( 33, 4, 5 );
   var busFrameMesh = new THREE.MeshStandardMaterial({ color: 0x333333 });
@@ -159,7 +122,6 @@ function Bus(platformSide) {  //platformSide should be "platformLeft" or "platfo
   bus.frame.position.set( bfp.x, bfp.y, bfp.z );
   bus.frame.castShadow = true;
 
-  ///interior (provides mass to body for collisions)
   var busInteriorGeometry = new THREE.BoxGeometry( 33, 7, 11 );
   var busInteriorMesh = new THREE.MeshStandardMaterial({ color: 0x777777 });
   var busInteriorMaterial = Physijs.createMaterial( busInteriorMesh, 50, 50 );
@@ -170,7 +132,6 @@ function Bus(platformSide) {  //platformSide should be "platformLeft" or "platfo
   bus.interior.position.set( 0, 5.5, 0 );
   bus.frame.add(bus.interior);
 
-  ///body
   var color = ( bus.platformSide == "platformLeft" ? "green" : "red" );
   var loader = new THREE.GLTFLoader();
   loader.load(
@@ -188,13 +149,10 @@ function Bus(platformSide) {  //platformSide should be "platformLeft" or "platfo
     },
   );
   
-  //rotates platformLeft bus 180 degress so facing right bus
   if ( bus.platformSide === "platformLeft" ) { bus.frame.rotation.y = Math.PI; }
   
-  //adds all static bus parts to the scene as a single physical object
   scene.add( bus.frame );
   
-  ///wheels
   var fr = 2;  //wheel front radius
   var br = 2;  //wheel back radius
   var wi = 1;  //wheel width
@@ -203,36 +161,29 @@ function Bus(platformSide) {  //platformSide should be "platformLeft" or "platfo
   var busWheelImage = "./images/bus_wheel_front_uv_fill.png";
   var busWheelGeometry = new THREE.CylinderGeometry( fr, br, wi, segments );
 
-  //wheel side & back material (color only, no image)
   var busWheelColorBaseMaterial = new THREE.MeshLambertMaterial({ color: 0x000000 });
   var busWheelColorMaterial = Physijs.createMaterial( busWheelColorBaseMaterial, bwf, bwr );
   busWheelMaterialsArray.push( busWheelColorMaterial );  //(.materialindex = 0)
 
-  //wheel front material (wheel image)
   var busWheelImageLoader = new THREE.TextureLoader();
   busWheelImageLoader.load( busWheelImage, function ( texture ) { 
     var busWheelImageMaterial = Physijs.createMaterial( 
       new THREE.MeshBasicMaterial({ map: texture }), bwf, bwr 
     ); 
-    busWheelMaterialsArray.push( busWheelImageMaterial );  //(.materialindex = 1)
+    busWheelMaterialsArray.push( busWheelImageMaterial ); 
   }); 
 
-  //assigns each of the wheel's faces to a .materialindex
   var busWheelFaceCount = busWheelGeometry.faces.length;
   for ( i=0; i<busWheelFaceCount; i++ ) {
-    //first set of faces makes up the wheel's tread
     if ( i < segments*2 ) {
-      busWheelGeometry.faces[i].materialIndex = 0; //assigns color material index
-    //second set of faces makes up the wheel's outside
+      busWheelGeometry.faces[i].materialIndex = 0; 
     } else if ( i < segments*3 ) {
-      busWheelGeometry.faces[i].materialIndex = 1; //assigns image material index
-    //third set of faces makes up the wheel's inside
+      busWheelGeometry.faces[i].materialIndex = 1; 
     } else {
-      busWheelGeometry.faces[i].materialIndex = 0; //assigns color material index
+      busWheelGeometry.faces[i].materialIndex = 0; 
     }
   }
 
-  //wheel creation & configuration as four physi.js objects
   bus.wheel_fl = new Physijs.CylinderMesh( busWheelGeometry, busWheelMaterialsArray, 300 );
   bus.wheel_fr = new Physijs.CylinderMesh( busWheelGeometry, busWheelMaterialsArray, 300 );
   bus.wheel_bl = new Physijs.CylinderMesh( busWheelGeometry, busWheelMaterialsArray, 300 );
@@ -249,7 +200,6 @@ function Bus(platformSide) {  //platformSide should be "platformLeft" or "platfo
   configureWheel( bus.wheel_bl, { x: backX, y: 2, z: bfp.z + 5 }, "port" );
   configureWheel( bus.wheel_br, { x: backX, y: 2, z: bfp.z - 5 }, "starboard" );   
   
-  ///wheel constraints
   var wheel_fl_constraint = new Physijs.DOFConstraint( bus.wheel_fl, bus.frame, bus.wheel_fl.position );
   var wheel_fr_constraint = new Physijs.DOFConstraint( bus.wheel_fr, bus.frame, bus.wheel_fr.position );
   var wheel_bl_constraint = new Physijs.DOFConstraint( bus.wheel_bl, bus.frame, bus.wheel_bl.position );
@@ -261,10 +211,6 @@ function Bus(platformSide) {  //platformSide should be "platformLeft" or "platfo
   bus.wheel_br_constraint = configureWheelConstraints( wheel_br_constraint );
 
 }
-
-
-  
-/////---Functions---/////
 
 function playLoadingAnimationIfDocumentNotReady() {
   loadingAnimation.style.visibility = "visible";
@@ -402,12 +348,6 @@ function checkForMatchCompletion() {
 }
 
 function handleKeyDown ( keyEvent ) {
-  // sets wheel motors; .configureAngularMotor params are:
-  //   1) which_motor (as numbers matched to axes: 0 = x, 1 = y, 2 = z)
-  //   2) low_limit (lower limit of the motor)
-  //   3) high_limit (upper limit of the motor)
-  //   4) velocity (target velocity)
-  //   5) max_force (maximum force the motor can apply)
   switch ( keyEvent.keyCode ) {
     // BUS 1
     // pivots wheels for steering
@@ -468,30 +408,24 @@ function handleKeyDown ( keyEvent ) {
 
 function handleKeyUp(keyEvent){
    switch( keyEvent.keyCode ) {
-    // BUS 1
-    //sets front wheels straight again
      case 65: case 68: case 37: case 39:
       busArray[0].wheel_fr_constraint.configureAngularMotor( 1, 0, 0, 10, 200 );
       busArray[0].wheel_fr_constraint.enableAngularMotor( 1 );
       busArray[0].wheel_fl_constraint.configureAngularMotor( 1, 0, 0, 10, 200 );
       busArray[0].wheel_fl_constraint.enableAngularMotor( 1 );
 		break;
-    //stops back wheel rotation
      case 87: case 83: case 38: case 40: 
       busArray[0].wheel_bl_constraint.configureAngularMotor( 2, 0, 0, 0, 2000 );
       busArray[0].wheel_bl_constraint.enableAngularMotor( 2 );
       busArray[0].wheel_br_constraint.configureAngularMotor( 2, 0, 0, 0, 2000 );
       busArray[0].wheel_br_constraint.enableAngularMotor( 2 );
 		break;
-    // BUS 2
-    //sets front wheels straight again
     case 76: case 222:
       busArray[1].wheel_fr_constraint.configureAngularMotor( 1, 0, 0, 10, 200 );
       busArray[1].wheel_fr_constraint.enableAngularMotor( 1 );
       busArray[1].wheel_fl_constraint.configureAngularMotor( 1, 0, 0, 10, 200 );
       busArray[1].wheel_fl_constraint.enableAngularMotor( 1 );
 		break;
-    //stops back wheel rotation
      case 80: case 186:
       busArray[1].wheel_bl_constraint.configureAngularMotor( 2, 0, 0, 0, 2000 );
       busArray[1].wheel_bl_constraint.enableAngularMotor( 2 );
@@ -500,10 +434,6 @@ function handleKeyUp(keyEvent){
 		break;
 	}
 }
-
-
-
-/////---Interaction---/////
 
 window.addEventListener("resize", onWindowResize, false);
 
@@ -542,18 +472,12 @@ $(".button_new_game").click(function(){
   restartGame(); 
 });
 
-
-
-/////---Display---/////
-
 initializeMatch();
-//playLoadingAnimationIfDocumentNotReady();
 
 function render() {
   if ( roundActive === true ) { checkForMatchCompletion(); }
   scene.simulate();
   camera.lookAt( 0, 1, 0 );
-  //camera.lookAt( busArray[0].frame.position );
   camera.updateProjectionMatrix();
   renderer.render( scene, camera);
   requestAnimationFrame( render );  
