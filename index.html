@@ -29,9 +29,12 @@
         }
 
         .carousel-item {
-            min-width: 320px;
+            min-width: 300px;
             text-align: center;
-            padding: 20px;
+            padding-left: 60px;
+            padding-right: 60px;
+            padding-top: 20px;
+            padding-bottom: 20px;
         }
 
         .carousel-item img {
@@ -115,25 +118,34 @@
     <div id="carousel-container" class="carousel-container">
         <div id="carousel" class="carousel">
             <div class="carousel-item">
-                <img src="https://via.placeholder.com/100" alt="Supermarket">
+                <img src="./placesPic/Supermarket.png" alt="Supermarket">
                 <h3>Supermarket</h3>
-                <p>Buy groceries and essentials</p>
+                <p>Buy groceries and essentials.</p>
+                <button onclick="window.location.href='./supermarket/market.html'" style="margin-top: 10px; padding: 5px 10px; background-color: #6200ea; color: white; border: none; border-radius: 5px; cursor: pointer;">Visit Supermarket</button>
             </div>
             <div class="carousel-item">
-                <img src="https://via.placeholder.com/100" alt="Bus Station">
+                <img src="./placesPic/BusStation.png" alt="BusStation">
                 <h3>Bus Station</h3>
-                <p>Travel around the town</p>
+                <p>Travel around the town.</p>
                 <button onclick="window.location.href='./busStation/index.html'" style="margin-top: 10px; padding: 5px 10px; background-color: #6200ea; color: white; border: none; border-radius: 5px; cursor: pointer;">Visit Bus Station</button>
             </div>
             <div class="carousel-item">
-                <img src="https://via.placeholder.com/100" alt="Park">
-                <h3>Park</h3>
-                <p>Relax and enjoy nature</p>
+                <img src="./placesPic/Pizza.png" alt="Pizza">
+                <h3>Pizza Place</h3>
+                <p>Taste the deliciousness of Italian flavor.</p>
+                <button onclick="window.location.href='./pizza/index.html'" style="margin-top: 10px; padding: 5px 10px; background-color: #6200ea; color: white; border: none; border-radius: 5px; cursor: pointer;">Visit Pizza Place</button>
             </div>
             <div class="carousel-item">
-                <img src="https://via.placeholder.com/100" alt="Pizza">
-                <h3>Pizza Place</h3>
-                <p>Relax and enjoy nature</p>
+                <img src="./placesPic/CoffeeShop.png" alt="CoffeeShop">
+                <h3>Coffee Shop</h3>
+                <p>Have a good coffee and chill.</p>
+                <button onclick="window.location.href='./coffeeShop/index.html'" style="margin-top: 10px; padding: 5px 10px; background-color: #6200ea; color: white; border: none; border-radius: 5px; cursor: pointer;">Visit Coffee Shop</button>
+            </div>
+            <div class="carousel-item">
+                <img src="./placesPic/Stadium.png" alt="Stadium">
+                <h3>Stadium</h3>
+                <p>Watch and support your favorite match.</p>
+                <button onclick="window.location.href='./stadium/index.html'" style="margin-top: 10px; padding: 5px 10px; background-color: #6200ea; color: white; border: none; border-radius: 5px; cursor: pointer;">Visit Stadium</button>
             </div>
         </div>
         <div class="carousel-controls">
@@ -165,7 +177,7 @@
 
         function updateCarousel() {
             const totalItems = document.querySelectorAll('.carousel-item').length; // Count all items
-            const offset = -currentIndex * 420; // Adjust width based on item size
+            const offset = -currentIndex * 410; // Adjust width based on item size
             carousel.style.transform = `translateX(${offset}px)`;
         
             // Wrap around if the index is out of bounds
