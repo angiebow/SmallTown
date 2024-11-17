@@ -37,20 +37,14 @@ const setupCamera = () => {
 const setupRenderer = () => {
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    // renderer.shadowMap.enabled = true;
-    // renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.sortObjects = false
     document.body.appendChild(renderer.domElement);
 };
 
 const setupLights = () => {
-    // ambientLight = new THREE.AmbientLight( 0xffffff, .3 ); // soft white light
-    // scene.add( ambientLight );
-
     spotLight = new THREE.SpotLight(0xffffff, 0.8);
     spotLight.position.set(0, 20, -90);
     spotLight.decay = 2;
-    // spotLight.castShadow = true;
     spotLight.angle = Math.PI / 2;
     spotLight.penumbra = 1;
     spotLight.shadow.mapSize.width = 1024;
@@ -87,8 +81,6 @@ const setupControls = () => {
 const setupModels = () => {
     scene.add(stadiumObject());
     scene.add(skyCylinderObject());
-
-    renderCandles();
 };
 
 const radiantsToCoord = (distance, radiants, multiplier) => {
@@ -160,8 +152,6 @@ const init = () => {
     setupLights();
     setupControls();
     setupModels();
-
-    // window.addEventListener( 'resize', onWindowResize, false );
 };
 
 const render = () => {

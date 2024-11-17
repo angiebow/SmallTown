@@ -11,11 +11,7 @@ THREE.Lensflare = function () {
 	this.frustumCulled = false;
 	this.renderOrder = Infinity;
 
-	//
-
 	var positionScreen = new THREE.Vector3();
-
-	// textures
 
 	var tempMap = new THREE.DataTexture( new Uint8Array( 16 * 16 * 3 ), 16, 16, THREE.RGBFormat );
 	tempMap.minFilter = THREE.NearestFilter;
@@ -30,8 +26,6 @@ THREE.Lensflare = function () {
 	occlusionMap.wrapS = THREE.ClampToEdgeWrapping;
 	occlusionMap.wrapT = THREE.ClampToEdgeWrapping;
 	occlusionMap.needsUpdate = true;
-
-	// material
 
 	var geometry = THREE.Lensflare.Geometry;
 
@@ -119,11 +113,7 @@ THREE.Lensflare = function () {
 		transparent: false
 	} );
 
-	// the following object is used for occlusionMap generation
-
 	var mesh1 = new THREE.Mesh( geometry, material1a );
-
-	//
 
 	var elements = [];
 
@@ -152,8 +142,6 @@ THREE.Lensflare = function () {
 
 	};
 
-	//
-
 	var scale = new THREE.Vector2();
 	var screenPositionPixels = new THREE.Vector2();
 	var validArea = new THREE.Box2();
@@ -173,27 +161,17 @@ THREE.Lensflare = function () {
 		validArea.min.set( viewport.x, viewport.y );
 		validArea.max.set( viewport.x + ( viewport.z - 16 ), viewport.y + ( viewport.w - 16 ) );
 
-		// calculate position in screen space
-
 		positionScreen.setFromMatrixPosition( this.matrixWorld );
 
 		positionScreen.applyMatrix4( camera.matrixWorldInverse );
 		positionScreen.applyMatrix4( camera.projectionMatrix );
 
-		// horizontal and vertical coordinate of the lower left corner of the pixels to copy
-
 		screenPositionPixels.x = viewport.x + ( positionScreen.x * halfViewportWidth ) + halfViewportWidth - 8;
 		screenPositionPixels.y = viewport.y + ( positionScreen.y * halfViewportHeight ) + halfViewportHeight - 8;
 
-		// screen cull
-
 		if ( validArea.containsPoint( screenPositionPixels ) ) {
 
-			// save current RGB to temp texture
-
 			renderer.copyFramebufferToTexture( screenPositionPixels, tempMap );
-
-			// render pink quad
 
 			var uniforms = material1a.uniforms;
 			uniforms.scale.value = scale;
@@ -201,19 +179,13 @@ THREE.Lensflare = function () {
 
 			renderer.renderBufferDirect( camera, null, geometry, material1a, mesh1, null );
 
-			// copy result to occlusionMap
-
 			renderer.copyFramebufferToTexture( screenPositionPixels, occlusionMap );
-
-			// restore graphics
 
 			var uniforms = material1b.uniforms;
 			uniforms.scale.value = scale;
 			uniforms.screenPosition.value = positionScreen;
 
 			renderer.renderBufferDirect( camera, null, geometry, material1b, mesh1, null );
-
-			// render elements
 
 			var vecX = - positionScreen.x * 2;
 			var vecY = - positionScreen.y * 2;
@@ -266,8 +238,6 @@ THREE.Lensflare = function () {
 THREE.Lensflare.prototype = Object.create( THREE.Mesh.prototype );
 THREE.Lensflare.prototype.constructor = THREE.Lensflare;
 THREE.Lensflare.prototype.isLensflare = true;
-
-//
 
 THREE.LensflareElement = function ( texture, size, distance, color ) {
 

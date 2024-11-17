@@ -13,7 +13,6 @@ const stadiumField = () => {
 
     const fieldTexture2 = new THREE.TextureLoader().load('textures/field2.png');
 
-    // Materials
     const grassMaterial = new THREE.MeshPhongMaterial({
         map: grassTexture,
         bumpMap: grassBump,
@@ -26,7 +25,6 @@ const stadiumField = () => {
         map: fieldTexture,
         transparent: true,
         opacity: 0.2,
-        // roughness: 0.7,
         side: THREE.BackSide,
     });
 
@@ -34,7 +32,6 @@ const stadiumField = () => {
         map: fieldTexture2,
         transparent: true,
         opacity: 0.2,
-        // roughness: 0.7,
         side: THREE.BackSide,
     });
 
@@ -43,7 +40,6 @@ const stadiumField = () => {
         side: THREE.DoubleSide,
     })
 
-    // Geometries
     const grassGeo = new THREE.PlaneGeometry( 300, 300, 1 );
 
     const fieldGeo = new THREE.PlaneGeometry( 200, 200, 1 );
@@ -52,7 +48,6 @@ const stadiumField = () => {
 
     const boardSidesGeo = new THREE.PlaneGeometry( 194, 2, 1 );
 
-    // Meshes
     const gameField = new THREE.Group();
 
     const grass = new THREE.Mesh( grassGeo, grassMaterial);

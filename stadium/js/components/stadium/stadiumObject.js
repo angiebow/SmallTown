@@ -2,10 +2,7 @@ const stadiumObject = () => {
 
     const dustTexture = new THREE.TextureLoader().load('textures/dust.png');
 
-    // Meshes
     const stadium = new THREE.Group();
-
-    // Flares
 
     const getPositions = (N) => {
         let flares = [];
@@ -91,7 +88,6 @@ const stadiumObject = () => {
         };
     };
 
-    // Dust Particles
     const dustParticles = () => {
         const environmentDustGeo = new THREE.Geometry();
         const environmentDustMat = new THREE.PointsMaterial({
@@ -122,8 +118,7 @@ const stadiumObject = () => {
         return dust3;
     };
 
-        // Smoke Particles
-        const smokeParticles = () => {
+    const smokeParticles = () => {
             const environmentSmokeGeo = new THREE.Geometry();
             const environmentSmokeMat = new THREE.PointsMaterial({
                 size: 60,
@@ -153,7 +148,6 @@ const stadiumObject = () => {
             return smoke;
         };
 
-    // Corner Light Dust
     const dustParticlesLights = () => {
         const dust = new THREE.Group();
 
@@ -230,12 +224,6 @@ const stadiumObject = () => {
     return dust;
     }
 
-    // Dust Particles Corners
-
-
-
-
-    // Adding objects to the stadium
     stadium.add(stadiumStructure());
     stadium.add(stadiumSeats());
     stadium.add(stadiumField());

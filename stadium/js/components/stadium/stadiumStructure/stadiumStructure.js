@@ -30,7 +30,6 @@ const stadiumStructure = () => {
     steelSideBump.wrapT = THREE.RepeatWrapping;
     steelSideBump.repeat.set(10, 1);
 
-    // Materials
     const structureMaterial = new THREE.MeshBasicMaterial({
         map: concrete,
         side: THREE.DoubleSide,
@@ -44,8 +43,6 @@ const stadiumStructure = () => {
     const steelMaterial= new THREE.MeshBasicMaterial({
         map: steelTexture,
         transparent: true,
-        // roughness: 0.2,
-        // metalness: 0,
         depthTest: false,
         side: THREE.DoubleSide,
     });
@@ -53,8 +50,6 @@ const stadiumStructure = () => {
     const steelSideMaterial= new THREE.MeshBasicMaterial({
         map: steelSideTexture,
         transparent: true,
-        // roughness: 0.2,
-        // metalness: 0,
         depthTest: false,
         side: THREE.DoubleSide,
     });
@@ -62,20 +57,15 @@ const stadiumStructure = () => {
     const steelMaterialBack= new THREE.MeshBasicMaterial({
         map: steelTexture,
         transparent: true,
-        // roughness: 0.2,
-        // metalness: 0,
         side: THREE.DoubleSide,
     });
 
     const steelSideMaterialBack= new THREE.MeshBasicMaterial({
         map: steelSideTexture,
         transparent: true,
-        // roughness: 0.2,
-        // metalness: 0,
         side: THREE.DoubleSide,
     });
 
-    // Geometries
     const stadiumCoverGeo = new THREE.PlaneGeometry( 300, 30, 1 );
 
     const stadiumSideCoverGeo = new THREE.PlaneGeometry( 200, 30, 1 );
@@ -86,7 +76,6 @@ const stadiumStructure = () => {
 
     const steelSideGeo = new THREE.PlaneGeometry( 200, 6, 1 );
 
-    // Meshes
     const structure = new THREE.Group();
 
     const coverFront = new THREE.Mesh( stadiumCoverGeo, coverMaterial );
@@ -181,10 +170,6 @@ const stadiumStructure = () => {
     structure.add(steelBackStructure);
     structure.add(steelLeftStructure);
     structure.add(steelRightStructure);
-    // structure.add(steelStructureBack);
-    // structure.add(steelBackStructureBack);
-    // structure.add(steelLeftStructureBack);
-    // structure.add(steelRightStructureBack);
 
     return structure;
 }

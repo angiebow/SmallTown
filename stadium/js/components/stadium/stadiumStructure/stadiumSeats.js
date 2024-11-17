@@ -1,6 +1,5 @@
 const stadiumSeats = () => {
 
-    // Textures
     const seatsTexture = new THREE.TextureLoader().load('textures/seats1.jpg');
     seatsTexture.wrapS = THREE.RepeatWrapping;
     seatsTexture.wrapT = THREE.RepeatWrapping;
@@ -11,30 +10,21 @@ const stadiumSeats = () => {
     seatsSidesTexture.wrapT = THREE.RepeatWrapping;
     seatsSidesTexture.repeat.set(10, 2);
 
-    // Materials
     const seatsMaterial = new THREE.MeshBasicMaterial({
         map: seatsTexture,
-        // emissive: 0xfceeb6,
-        // emissiveIntensity: 0.3,
-        // metalness: 0.2,
         side: THREE.DoubleSide,
     });
 
     const seatsSideMaterial = new THREE.MeshBasicMaterial({
         map: seatsSidesTexture,
-        // emissive: 0xfceeb6,
-        // emissiveIntensity: 0.3,
-        // metalness: 0.2,
         side: THREE.DoubleSide,
     });
 
-    // Geometries
     const seatsGeo = new THREE.PlaneGeometry( 300, 40, 1 );
 
     const seatsSideGeo = new THREE.PlaneGeometry( 200, 40, 1 );
     seatsSideGeo.translate.x = -200;
 
-    // Meshes
     const seatsObject = new THREE.Group();
 
     const seats = new THREE.Mesh( seatsGeo, seatsMaterial );
