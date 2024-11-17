@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Frac'za</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <style>
+      body {
+        font-family: Monospace;
+        background-color: #000;
+        color: #fff;
+        margin: 0px;
+        overflow: hidden;
+      }
+      #info {
+        color: #fff;
+        position: absolute;
+        bottom: 10px;
+        width: 100%;
+        text-align: center;
+        z-index: 100;
+        display:block;
+      }
+      #info a, .button { color: #f00; font-weight: bold; text-decoration: underline; cursor: pointer }
+    </style>
+  </head>
+
+  <body>
+    <div id="info">
+    Frac'za - Inspired by this <a href="http://chainsawsuit.com/2012/09/06/new-pizza-hut-fraczas/">Chainsawsuit comic</a> - Written by <a href="https://github.com/mweiss">mweiss</a> - Powered by <a href="http://github.com/mrdoob/three.js" target="_blank">three.js</a>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r54/three.js"></script>
+
+    <script>
+
+      var container, stats;
+
+      var camera, scene, renderer;
+
+      var mouseX = 0, mouseY = 0;
+
+      var windowHalfX = window.innerWidth / 2;
+      var windowHalfY = window.innerHeight / 2;
+
+      var subPizzaRatio = 0.1;
+      var crustRatio = 0.1;
+      var cheeseRatio = crustRatio * .2;
+      var numSubPizzas = 20;
+      var numGiveUp = 3000;
+      var recursionDepth = 4;
+      var crustColors = [0x8b4513, 0xd2691e, 0xcd853f, 0xf4a460, 0xa0522d ];
+      var cheeseColors = [0xFDCA49, 0xFFA927, 0xF8872E, 0xFC6B0A, 0xFC580C];
+      init();
+      animate();
+
+      function pizza(scene, posX, posY, posZ, dim, res, depth) {
+        var toriodGeometry = new THREE.TorusGeometry(dim,
+          dim * crustRatio,
+          res,
+          res);
+        var cylinderGeometry = new THREE.CylinderGeometry(dim - (dim * crustRatio),
+          dim - (dim * crustRatio),
+          (dim * cheeseRatio),
+          res);
+        var object = new THREE.Mesh( toriodGeometry, new THREE.MeshLambertMaterial( { color: crustColors[depth] } ) );
+        object.position = new THREE.Vector3(posX, posY, posZ);
+        scene.add(object);
+        object = new THREE.Mesh( cylinderGeometry, new THREE.MeshLambertMaterial( { color: cheeseColors[depth] } ) );
+        object.position = new THREE.Vector3(posX, posY, posZ);
+        object.rotation = new THREE.Vector3(Math.PI / 2, 0, 0);
+        scene.add(object);
+      }
+      
+      function recPizza(scene, posX, posY, posZ, dim, depth) {
+        pizza(scene, posX, posY, posZ, dim, Math.floor(40 / depth), depth - 1);
+        if (depth >= recursionDepth) {
+          return;
+        }
+        var i, j, subPizzas = 0;
+        var subPizzaRadius = dim * subPizzaRatio;
+        var insideDim = dim - (dim * crustRatio) - (subPizzaRadius * 3);
+        var subPizzaDims = [], subPizzaDim;
+        var minRadius = (subPizzaRadius * subPizzaRadius) / 100;
+        var randomDim, dst, doRender;
+        top:
+        for (i = 0; i < numGiveUp && subPizzas  < numSubPizzas / Math.pow(2, depth - 1); i += 1) {
+          doRender = true;
+          randomDim = [insideDim * ((Math.random() * 2) - 1), insideDim * ((Math.random() * 2) - 1)];
+          for (j = 0; j < subPizzaDims.length; j += 1) {
+            subPizzaDim = subPizzaDims[j];
+            dst = Math.sqrt(Math.max(.0001, Math.pow(randomDim[0] - subPizzaDim[0], 2) + 
+                            Math.max(.0001, Math.pow(randomDim[1] - subPizzaDim[1], 2))));
+            if (dst < 3 * subPizzaRadius) {
+              doRender = false;
+              break;
+            }           
+          }
+          if (doRender) {
+            subPizzaDims.push(randomDim);
+            recPizza(scene, posX + randomDim[0], posY + randomDim[1], posZ + dim * cheeseRatio, subPizzaRadius, depth + 1);
+            subPizzas += 1;
+          }
+        }
+      }
+      function init() {
+
+        container = document.createElement( 'div' );
+        document.body.appendChild( container );
+
+        camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 2000 );
+        camera.position.z = 100;
+
+        // scene
+
+        scene = new THREE.Scene();
+
+        var ambient = new THREE.AmbientLight( 0x101030 );
+        scene.add( ambient );
+
+        var directionalLight = new THREE.DirectionalLight( 0xffeedd );
+        directionalLight.position.set( 0, 0, 1 ).normalize();
+        scene.add( directionalLight );
+
+        recPizza(scene, 0, 0, 0, 100, 1);
+        
+        // renderer
+        renderer = new THREE.WebGLRenderer();
+        renderer.setSize( window.innerWidth, window.innerHeight );
+        container.appendChild( renderer.domElement );
+
+        document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+
+        window.addEventListener( 'resize', onWindowResize, false );
+
+      }
+
+      function onWindowResize() {
+
+        windowHalfX = window.innerWidth / 2;
+        windowHalfY = window.innerHeight / 2;
+
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+
+        renderer.setSize( window.innerWidth, window.innerHeight );
+
+      }
+
+      function onDocumentMouseMove( event ) {
+
+        mouseX = ( event.clientX - windowHalfX ) / 2;
+        mouseY = ( event.clientY - windowHalfY ) / 2;
+
+      }
+
+      function animate() {
+
+        requestAnimationFrame( animate );
+        render();
+
+      }
+
+      function render() {
+
+        camera.position.x += ( mouseX - camera.position.x ) * .05;
+        camera.position.y += ( - mouseY - camera.position.y ) * .05;
+
+        camera.lookAt( scene.position );
+
+        renderer.render( scene, camera );
+
+      }
+
+    </script>
+
+  </body>
+</html>

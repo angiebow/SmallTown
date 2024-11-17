@@ -150,7 +150,7 @@ function main() {
   controls.screenSpacePanning = true;
 
   scene = new THREE.Scene();
-  scene.background = new THREE.Color('#FFDAB9'); // Warna PeachPuff
+  scene.background = new THREE.Color('#D8BFD8'); // Soft dreamy purple (Thistle)
 
   document.getElementById('seed-button').addEventListener('click', () => {
     isPlanting = true;
@@ -352,30 +352,25 @@ function switchDayNight() {
   isDay = !isDay;
 
   if (isDay) {
-    // Mode Siang
-    scene.background = new THREE.Color('#FFDAB9'); // Warna PeachPuff
+    scene.background = new THREE.Color('#D8BFD8'); 
     directionalLight.intensity = 1.5;
     hemisphereLight.intensity = 1;
-    directionalLight.color.set(0xfffacd); // Warna LemonChiffon
-    hemisphereLight.color.set(0xefefef);
-    hemisphereLight.groundColor.set(0xffffff);
+    directionalLight.color.set(0xEEDDFF); 
+    hemisphereLight.color.set(0xEEE8AA);
+    hemisphereLight.groundColor.set(0xFFF8DC); 
 
-    // Ubah ikon tombol menjadi 'night' karena mode saat ini adalah siang
     document.getElementById('day-night-toggle').style.backgroundImage = "url('./assets/night.png')";
   } else {
-    // Mode Malam
-    scene.background = new THREE.Color('#000033'); // Warna Biru Tua
-    directionalLight.intensity = 0.2; // Intensitas lebih rendah
-    hemisphereLight.intensity = 0.3; // Intensitas lebih rendah
-    directionalLight.color.set(0x666699); // Warna lebih redup
-    hemisphereLight.color.set(0x333366);
-    hemisphereLight.groundColor.set(0x000000);
+    scene.background = new THREE.Color('#000033');
+    directionalLight.intensity = 0.2;
+    hemisphereLight.intensity = 0.3; 
+    directionalLight.color.set(0x666699); 
+    hemisphereLight.color.set(0x333366); 
+    hemisphereLight.groundColor.set(0x000000); 
 
-    // Ubah ikon tombol menjadi 'day' karena mode saat ini adalah malam
     document.getElementById('day-night-toggle').style.backgroundImage = "url('./assets/day.png')";
   }
 }
-
 
 function loadCars({ x, z, cluster, direction }) {
   loader.load(`/gltf/${cluster}.gltf`, (gltf) => {
@@ -408,3 +403,4 @@ function loadCars({ x, z, cluster, direction }) {
     });
   });
 }
+
